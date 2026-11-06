@@ -20,7 +20,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- Pygame-ce, packaged for the browser with pygbag
 
-\- Window: 480x800 portrait, pygame.SCALED
+\- Window: 400x600 portrait, pygame.SCALED | pygame.RESIZABLE
 
 \- Target devices: PC, laptop, tablet, phone
 
@@ -72,7 +72,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \## Milestones
 
-\- \[ ] 1. Window and game loop
+\- \[x] 1. Window and game loop
 
 \- \[ ] 2. Player moves and stays on screen
 
