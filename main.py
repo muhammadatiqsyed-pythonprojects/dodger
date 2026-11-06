@@ -34,6 +34,25 @@ class Player:
         self.rect.clamp_ip(screen_rect)
 
 
+# ---------------------------ROCK CLASS-------------------------
+class Rock:
+    def __init__(self, x, y, width, height, color, speed):
+        self.rect = pygame.FRect(0, 0, width, height)
+        self.rect.centerx = x
+        self.rect.bottom = y
+        self.color = color
+        self.speed = speed
+
+    def update(self, dt):
+        self.rect.y += self.speed * dt
+
+    def is_off_the_screen(self, surface_height):
+        return self.rect.top >= surface_height
+
+    def draw(self, surface):
+        pygame.draw.rect(surface, self.color, self.rect)
+
+
 async def main():
     # ------------------------SETUP----------------------------
     pygame.init()
@@ -53,12 +72,21 @@ async def main():
     player_width = 50
     player_height = 20
     player_color = "orange"
-    player_speed = 300
+    player_speed = 300  # pixels per second
     player_x = WINDOW_WIDTH // 2
     player_y = WINDOW_HEIGHT - 50
     player1 = Player(
         player_x, player_y, player_width, player_height, player_color, player_speed
     )
+
+    # Rock class Object
+    rock_width = 10
+    rock_height = 10
+    rock_color = "grey"
+    rock_speed = 300  # pixels per second
+    rock_x = WINDOW_WIDTH // 2
+    rock_y = 0
+    rock1 = Rock(rock_x, rock_y, rock_width, rock_height, rock_color, rock_speed)
 
     # GAME LOOP
     while running:
@@ -71,11 +99,15 @@ async def main():
         # --------------------------UPDATE------------------
 
         player1.update(dt, screen_rect)
+        rock1.update(dt)
+        off_the_screen = rock1.is_off_the_screen(WINDOW_HEIGHT)
+        print(off_the_screen)
 
         # --------------------------DRAW----------------------
         screen.fill("darkblue")
 
         player1.draw(screen)
+        rock1.draw(screen)
 
         pygame.display.flip()
         await asyncio.sleep(0)
