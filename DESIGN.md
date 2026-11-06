@@ -74,7 +74,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- \[x] 1. Window and game loop
 
-\- \[ ] 2. Player moves and stays on screen
+\- \[x] 2. Player moves and stays on screen
 
 \- \[ ] 3. One falling rock, removed off-screen
 
