@@ -1,11 +1,18 @@
-import pygame
 import asyncio
+import random
 
+import pygame
 
 # WINDOW WIDTH, HEIGHT AND FRAME RATE PER SECOND
 WINDOW_WIDTH = 400
 WINDOW_HEIGHT = 600
 FPS = 60
+
+# rock global CONSTANTS
+ROCK_MIN_SIZE = 10
+ROCK_MAX_SIZE = 20
+ROCK_MIN_SPEED = 300
+ROCK_MAX_SPEED = 500
 
 
 # --------------------------PLAYER CLASS------------------------
@@ -64,6 +71,9 @@ async def main():
 
     # VARIABLES
     running = True
+    last_spawn_time = pygame.time.get_ticks()
+    spawn_interval = 700
+    rock_list = []
 
     # SCREEN_RECT
     screen_rect = screen.get_rect()
@@ -79,35 +89,39 @@ async def main():
         player_x, player_y, player_width, player_height, player_color, player_speed
     )
 
-    # Rock class Object
-    rock_width = 10
-    rock_height = 10
-    rock_color = "grey"
-    rock_speed = 300  # pixels per second
-    rock_x = WINDOW_WIDTH // 2
-    rock_y = 0
-    rock1 = Rock(rock_x, rock_y, rock_width, rock_height, rock_color, rock_speed)
-
     # GAME LOOP
     while running:
         # ----------------------INPUT------------------
         dt = clock.tick(FPS) / 1000
+        now = pygame.time.get_ticks()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
         # --------------------------UPDATE------------------
-
         player1.update(dt, screen_rect)
-        rock1.update(dt)
-        off_the_screen = rock1.is_off_the_screen(WINDOW_HEIGHT)
-        print(off_the_screen)
+        if now - last_spawn_time >= spawn_interval:
+            width = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
+            height = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
+            x = random.randint(width // 2, WINDOW_WIDTH - width // 2)
+            speed = random.randint(ROCK_MIN_SPEED, ROCK_MAX_SPEED)
+            rock = Rock(x, 0, width, height, "grey", speed)
+            rock_list.append(rock)
+            last_spawn_time = now
+        for rock in rock_list:
+            rock.update(dt)
+
+        for rock in rock_list[:]:
+            off_the_screen = rock.is_off_the_screen(WINDOW_HEIGHT)
+            if off_the_screen:
+                rock_list.remove(rock)
 
         # --------------------------DRAW----------------------
         screen.fill("darkblue")
 
         player1.draw(screen)
-        rock1.draw(screen)
+        for rock in rock_list:
+            rock.draw(screen)
 
         pygame.display.flip()
         await asyncio.sleep(0)

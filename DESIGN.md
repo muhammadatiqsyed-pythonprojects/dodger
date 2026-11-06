@@ -76,9 +76,9 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- \[x] 2. Player moves and stays on screen
 
-\- \[ ] 3. One falling rock, removed off-screen
+\- \[x] 3. One falling rock, removed off-screen
 
-\- \[ ] 4. Many rocks (list) with spawn timer
+\- \[x] 4. Many rocks (list) with spawn timer
 
 \- \[ ] 5. Collision
 
