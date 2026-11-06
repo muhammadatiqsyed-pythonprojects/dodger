@@ -20,11 +20,17 @@ class Player:
         pygame.draw.rect(surface, self.color, self.rect)
 
     def update(self, dt, screen_rect):
+        move_by_key = False
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+            move_by_key = True
             self.rect.x -= self.speed * dt
         if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+            move_by_key = True
             self.rect.x += self.speed * dt
+        if not move_by_key and pygame.mouse.get_pressed()[0]:
+            self.rect.centerx = pygame.mouse.get_pos()[0]
+
         self.rect.clamp_ip(screen_rect)
 
 
