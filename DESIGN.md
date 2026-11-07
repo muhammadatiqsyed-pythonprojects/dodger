@@ -80,7 +80,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- \[x] 4. Many rocks (list) with spawn timer
 
-\- \[ ] 5. Collision
+\- \[x] 5. Collision
 
 \- \[ ] 6. States and reset
 
