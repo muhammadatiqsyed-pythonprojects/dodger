@@ -82,7 +82,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- \[x] 5. Collision
 
-\- \[ ] 6. States and reset
+\- \[x] 6. States and reset
 
 \- \[ ] 7. Score display and best score
 
