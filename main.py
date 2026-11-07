@@ -110,6 +110,9 @@ async def main():
             last_spawn_time = now
         for rock in rock_list:
             rock.update(dt)
+            if rock.rect.colliderect(player1.rect):
+                running = False
+                break
 
         for rock in rock_list[:]:
             off_the_screen = rock.is_off_the_screen(WINDOW_HEIGHT)
