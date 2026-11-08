@@ -104,6 +104,10 @@ async def main():
     current_score = 0
     best_score = 0
 
+    # Sound Variables
+    hit_sound = pygame.mixer.Sound("assets/sounds/hit.ogg")
+    hit_sound.set_volume(0.5)
+
     # SCREEN_RECT
     screen_rect = screen.get_rect()
 
@@ -177,6 +181,7 @@ async def main():
                     gameover_time = now
                     new_best = current_score > best_score
                     best_score = max(best_score, current_score)
+                    hit_sound.play()
                     break
 
             for rock in rock_list[:]:
