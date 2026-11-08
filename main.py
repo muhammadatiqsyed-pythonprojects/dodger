@@ -10,8 +10,8 @@ FPS = 60
 RESTART_DELAY = 500
 
 # rock global CONSTANTS
-ROCK_MIN_SIZE = 10
-ROCK_MAX_SIZE = 20
+ROCK_BIG_WIDTH = 40
+ROCK_SMALL_WIDTH = 22
 ROCK_MIN_SPEED = 300
 ROCK_MAX_SPEED = 500
 START_SPAWN_INTERVAL = 700
@@ -32,6 +32,10 @@ class Player:
     def draw(self, surface):
         surface.blit(self.image, self.rect)
 
+    @property
+    def hitbox(self):
+        return self.rect.inflate(-self.rect.width * 0.4, -self.rect.height * 0.3)
+
     def update(self, dt, screen_rect, ignore_mouse):
         move_by_key = False
         keys = pygame.key.get_pressed()
@@ -49,11 +53,11 @@ class Player:
 
 # ---------------------------ROCK CLASS-------------------------
 class Rock:
-    def __init__(self, x, y, width, height, color, speed):
-        self.rect = pygame.FRect(0, 0, width, height)
+    def __init__(self, x, y, image, speed):
+        self.image = image
+        self.rect = self.image.get_frect()
         self.rect.centerx = x
         self.rect.bottom = y
-        self.color = color
         self.speed = speed
 
     def update(self, dt):
@@ -63,7 +67,11 @@ class Rock:
         return self.rect.top >= surface_height
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+        surface.blit(self.image, self.rect)
+
+    @property
+    def hitbox(self):
+        return self.rect.inflate(-self.rect.width * 0.3, -self.rect.height * 0.3)
 
 
 # ----------------------------BUTTON CLASS------------------------
@@ -78,6 +86,12 @@ class Button:
         button_text_img = font.render(message, True, text_color)
         button_text_rect = button_text_img.get_rect(center=self.rect.center)
         surface.blit(button_text_img, button_text_rect)
+
+
+def load_image(path, width):
+    image = pygame.image.load(path).convert_alpha()
+    w, h = image.get_size()
+    return pygame.transform.smoothscale(image, (width, round(width * h / w)))
 
 
 async def main():
@@ -124,6 +138,12 @@ async def main():
     )
     player1 = Player(player_x, player_y, player_image, player_speed)
 
+    # LOADING ROCK IMAGES
+    rock_images = [
+        load_image("assets/images/rock_big.png", ROCK_BIG_WIDTH),
+        load_image("assets/images/rock_small.png", ROCK_SMALL_WIDTH),
+    ]
+
     # Button class OBJECTS
     menu_button = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 260, 50, "grey")
     gameover_button = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 300, 50, "grey")
@@ -168,18 +188,19 @@ async def main():
             )
             speed_bonus = min(MAX_SPEED_BONUS, current_score * SPEED_STEP)
             if now - last_spawn_time >= spawn_interval:
-                width = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
-                height = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
-                rock_x = random.randint(width // 2, WINDOW_WIDTH - width // 2)
+                rock_image = random.choice(rock_images)
+                half_width = rock_image.get_width() // 2
+                rock_x = random.randint(half_width, WINDOW_WIDTH - half_width)
                 rock_speed = (
                     random.randint(ROCK_MIN_SPEED, ROCK_MAX_SPEED) + speed_bonus
                 )
-                rock = Rock(rock_x, 0, width, height, "grey", rock_speed)
+                rock = Rock(rock_x, 0, rock_image, rock_speed)
                 rock_list.append(rock)
                 last_spawn_time = now
             for rock in rock_list:
                 rock.update(dt)
-                if rock.rect.colliderect(player1.rect):
+                # CHECKING THE COLLISION
+                if rock.hitbox.colliderect(player1.hitbox):
                     game_state = "gameover"
                     gameover_time = now
                     new_best = current_score > best_score

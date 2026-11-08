@@ -55,3 +55,4 @@
 ## Credits
 - Music: "Chiptune: Exploration" by ansimuz, CC0 (https://opengameart.org/content/chiptune-exploration)
 - Sound effects: Impact Sounds by Kenney (https://kenney.nl), CC0
+- Graphics: Space Shooter art by Kenney (https://kenney.nl), CC0
