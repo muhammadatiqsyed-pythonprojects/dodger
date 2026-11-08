@@ -23,14 +23,14 @@ MAX_SPEED_BONUS = 200
 
 # --------------------------PLAYER CLASS------------------------
 class Player:
-    def __init__(self, x, y, width, height, color, speed):
-        self.rect = pygame.FRect(0, 0, width, height)
+    def __init__(self, x, y, image, speed):
+        self.image = image
+        self.rect = self.image.get_frect()
         self.rect.center = (x, y)
-        self.color = color
         self.speed = speed
 
     def draw(self, surface):
-        pygame.draw.rect(surface, self.color, self.rect)
+        surface.blit(self.image, self.rect)
 
     def update(self, dt, screen_rect, ignore_mouse):
         move_by_key = False
@@ -114,15 +114,15 @@ async def main():
     screen_rect = screen.get_rect()
 
     # Player class OBJECT
-    player_width = 50
-    player_height = 20
-    player_color = "orange"
     player_speed = 300  # pixels per second
     player_x = WINDOW_WIDTH // 2
     player_y = WINDOW_HEIGHT - 100
-    player1 = Player(
-        player_x, player_y, player_width, player_height, player_color, player_speed
+    player_image = pygame.image.load("assets/images/player.png").convert_alpha()
+    img_w, img_h = player_image.get_size()
+    player_image = pygame.transform.smoothscale(
+        player_image, (50, round(50 * img_h / img_w))
     )
+    player1 = Player(player_x, player_y, player_image, player_speed)
 
     # Button class OBJECTS
     menu_button = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 260, 50, "grey")
