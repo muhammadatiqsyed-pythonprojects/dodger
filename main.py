@@ -94,6 +94,11 @@ async def main():
     ignore_mouse = False
     gameover_time = 0
 
+    # Score Variables
+    run_start_time = 0
+    current_score = 0
+    best_score = 0
+
     # SCREEN_RECT
     screen_rect = screen.get_rect()
 
@@ -109,7 +114,7 @@ async def main():
     )
 
     # Button class OBJECTS
-    menu_button = Button(WINDOW_WIDTH // 2, 100, 260, 50, "grey")
+    menu_button = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 260, 50, "grey")
     gameover_button = Button(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2, 300, 50, "grey")
     buttons = {
         "menu": menu_button,
@@ -138,8 +143,11 @@ async def main():
                 player1.rect.center = (player_x, player_y)
                 ignore_mouse = True
                 last_spawn_time = now
+                run_start_time = now
+                current_score = 0
         # --------------------------UPDATE------------------
         if game_state == "playing":
+            current_score = (now - run_start_time) // 1000
             if not pygame.mouse.get_pressed()[0]:
                 ignore_mouse = False
             player1.update(dt, screen_rect, ignore_mouse)
@@ -156,13 +164,13 @@ async def main():
                 if rock.rect.colliderect(player1.rect):
                     game_state = "gameover"
                     gameover_time = now
+                    best_score = max(best_score, current_score)
                     break
 
             for rock in rock_list[:]:
                 off_the_screen = rock.is_off_the_screen(WINDOW_HEIGHT)
                 if off_the_screen:
                     rock_list.remove(rock)
-
         # --------------------------DRAW----------------------
         screen.fill("darkblue")
         if game_state == "menu":
@@ -173,10 +181,18 @@ async def main():
             player1.draw(screen)
             for rock in rock_list:
                 rock.draw(screen)
+            score_img = state_font.render(f"Score: {current_score}", True, "white")
+            score_rect = score_img.get_rect(midtop=(WINDOW_WIDTH // 2, 10))
+            screen.blit(score_img, score_rect)
             if game_state == "gameover":
                 gameover_button.draw_text(
                     screen, "black", "Gameover! Click to play again.", state_font
                 )
+                best_img = state_font.render(f"Best Score: {best_score}", True, "white")
+                best_rect = best_img.get_rect(
+                    midtop=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50)
+                )
+                screen.blit(best_img, best_rect)
 
         pygame.display.flip()
         await asyncio.sleep(0)
