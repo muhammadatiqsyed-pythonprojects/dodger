@@ -52,3 +52,6 @@
 
 # See \[DESIGN.md](DESIGN.md) for the plan and milestones.
 
+## Credits
+- Music: "Chiptune: Exploration" by ansimuz, CC0 (https://opengameart.org/content/chiptune-exploration)
+- Sound effects: Impact Sounds by Kenney (https://kenney.nl), CC0

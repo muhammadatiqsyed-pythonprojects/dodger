@@ -107,6 +107,8 @@ async def main():
     # Sound Variables
     hit_sound = pygame.mixer.Sound("assets/sounds/hit.ogg")
     hit_sound.set_volume(0.5)
+    pygame.mixer.music.load("assets/sounds/music.ogg")
+    pygame.mixer.music.set_volume(0.3)
 
     # SCREEN_RECT
     screen_rect = screen.get_rect()
@@ -154,6 +156,7 @@ async def main():
                 last_spawn_time = now
                 run_start_time = now
                 current_score = 0
+                pygame.mixer.music.play(-1)
         # --------------------------UPDATE------------------
         if game_state == "playing":
             current_score = (now - run_start_time) // 1000
@@ -181,6 +184,7 @@ async def main():
                     gameover_time = now
                     new_best = current_score > best_score
                     best_score = max(best_score, current_score)
+                    pygame.mixer.music.stop()
                     hit_sound.play()
                     break
 
