@@ -14,6 +14,11 @@ ROCK_MIN_SIZE = 10
 ROCK_MAX_SIZE = 20
 ROCK_MIN_SPEED = 300
 ROCK_MAX_SPEED = 500
+START_SPAWN_INTERVAL = 700
+MIN_SPAWN_INTERVAL = 250
+SPAWN_STEP = 10  # 10ms faster per point of score
+SPEED_STEP = 5  # pixels/second faster per point of score
+MAX_SPEED_BONUS = 200
 
 
 # --------------------------PLAYER CLASS------------------------
@@ -87,7 +92,7 @@ async def main():
     # VARIABLES
     running = True
     last_spawn_time = pygame.time.get_ticks()  # start time
-    spawn_interval = 700
+    new_best = False
     rock_list = []
     game_state = "menu"  # other states are playing and gameover
     state_font = pygame.font.Font(None, 28)
@@ -108,7 +113,7 @@ async def main():
     player_color = "orange"
     player_speed = 300  # pixels per second
     player_x = WINDOW_WIDTH // 2
-    player_y = WINDOW_HEIGHT - 50
+    player_y = WINDOW_HEIGHT - 100
     player1 = Player(
         player_x, player_y, player_width, player_height, player_color, player_speed
     )
@@ -151,11 +156,17 @@ async def main():
             if not pygame.mouse.get_pressed()[0]:
                 ignore_mouse = False
             player1.update(dt, screen_rect, ignore_mouse)
+            spawn_interval = max(
+                MIN_SPAWN_INTERVAL, START_SPAWN_INTERVAL - current_score * SPAWN_STEP
+            )
+            speed_bonus = min(MAX_SPEED_BONUS, current_score * SPEED_STEP)
             if now - last_spawn_time >= spawn_interval:
                 width = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
                 height = random.randint(ROCK_MIN_SIZE, ROCK_MAX_SIZE)
                 rock_x = random.randint(width // 2, WINDOW_WIDTH - width // 2)
-                rock_speed = random.randint(ROCK_MIN_SPEED, ROCK_MAX_SPEED)
+                rock_speed = (
+                    random.randint(ROCK_MIN_SPEED, ROCK_MAX_SPEED) + speed_bonus
+                )
                 rock = Rock(rock_x, 0, width, height, "grey", rock_speed)
                 rock_list.append(rock)
                 last_spawn_time = now
@@ -164,6 +175,7 @@ async def main():
                 if rock.rect.colliderect(player1.rect):
                     game_state = "gameover"
                     gameover_time = now
+                    new_best = current_score > best_score
                     best_score = max(best_score, current_score)
                     break
 
@@ -177,6 +189,11 @@ async def main():
             menu_button.draw_text(
                 screen, "black", "Welcome! Click to Play.", state_font
             )
+            help_img = state_font.render("Drag, or use arrows / A D", True, "white")
+            help_rect = help_img.get_rect(
+                midtop=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50)
+            )
+            screen.blit(help_img, help_rect)
         elif game_state in ("playing", "gameover"):
             player1.draw(screen)
             for rock in rock_list:
@@ -193,6 +210,12 @@ async def main():
                     midtop=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 50)
                 )
                 screen.blit(best_img, best_rect)
+                if new_best:
+                    new_img = state_font.render("New best!", True, "gold")
+                    new_rect = new_img.get_rect(
+                        midtop=(WINDOW_WIDTH // 2, WINDOW_HEIGHT // 2 + 80)
+                    )
+                    screen.blit(new_img, new_rect)
 
         pygame.display.flip()
         await asyncio.sleep(0)
