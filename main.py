@@ -71,7 +71,7 @@ class Rock:
 
     @property
     def hitbox(self):
-        return self.rect.inflate(-self.rect.width * 0.3, -self.rect.height * 0.3)
+        return self.rect.inflate(-self.rect.width * 0.1, -self.rect.height * 0.3)
 
 
 # ----------------------------BUTTON CLASS------------------------
