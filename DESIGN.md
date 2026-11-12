@@ -86,7 +86,7 @@ Slide sideways to dodge falling rocks. One hit ends the run.
 
 \- \[x] 7. Score display and best score
 
-\- \[ ] 8. Polish: difficulty, sound, browser test
+\- \[x] 8. Polish: difficulty, sound, browser test
 
 
 
